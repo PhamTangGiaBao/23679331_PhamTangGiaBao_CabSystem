@@ -38,6 +38,8 @@ Bước 9: Mô hình hóa dữ liệu (Xác định thực thể ERD):
 
 Bước 10: Xác định các non-requiredment:
 
+Bước 11: Tiến hành thiết kế các Usecase:
 
+Bước 12: Đặc tả Usecase:
 
 
