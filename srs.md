@@ -21,3 +21,11 @@ Bước 3: Xác định các Business Role (BR):
 - BR07: Gửi thông báo đến khách hàng và tài xế qua các kênh khác nhau.
 
 
+
+| STT | Business Problem | Ảnh hưởng |
+|---:|---|---|
+| 1 | Phân công tài xế thủ công | Chậm, dễ sai |
+| 2 | Khó theo dõi chuyến đi | Khách hàng khó nắm trạng thái |
+| 3 | Thanh toán chưa tập trung | Khó quản lý và đối soát |
+
+
