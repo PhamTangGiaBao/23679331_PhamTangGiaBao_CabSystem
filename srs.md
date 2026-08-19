@@ -10,7 +10,7 @@ Buoc 2: Xác định những stacholders:
 | Nhà cung cấp thanh toán | Xử lý thanh toán điện tử. |
 | Khó quản lý và đối soát | Gửi thông báo đến khách hàng/tài xế. |
 
-Bước 3: Xác định các Business Role (BR):
+Bước 3: Xác định các Business Goal (BG):
 | STT |  | Mô tả |
 - BR01: Đăng ký, đặt xe, theo dõi chuyến, thanh toán, xem lịch sử và đánh giá tài xế.
 - BR02: Nhận/từ chối chuyến, cập nhật trạng thái, vị trí và hoàn thành chuyến.
