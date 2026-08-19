@@ -11,6 +11,7 @@ Buoc 2: Xác định những stacholders:
 | Khó quản lý và đối soát | Gửi thông báo đến khách hàng/tài xế. |
 
 Bước 3: Xác định các Business Role (BR):
+| STT |  | Mô tả |
 - BR01: Đăng ký, đặt xe, theo dõi chuyến, thanh toán, xem lịch sử và đánh giá tài xế.
 - BR02: Nhận/từ chối chuyến, cập nhật trạng thái, vị trí và hoàn thành chuyến.
 - BR03: Quản lý khách hàng, tài xế, phương tiện, chuyến đi, xử lý sự cố và tra cứu giao dịch.
@@ -41,5 +42,11 @@ Bước 10: Xác định các non-requiredment:
 Bước 11: Tiến hành thiết kế các Usecase:
 
 Bước 12: Đặc tả Usecase:
+
+Bước 13: Tiêu chí chấp nhận Acceptance Criteria (AC):
+
+Bước 14: Truy xuất nguồn gốc yêu cầu (Requirement Traceability):
+
+
 
 
