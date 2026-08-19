@@ -33,7 +33,9 @@ Bước 7: Functional requiredment (FR):
 Bước 8: Xác định Bussiness Ruler:
 | Mã | Bussiness Rule | Nội dung |
 |:---|---|---|
+
 Bước 9: Mô hình hóa dữ liệu (Xác định thực thể ERD): 
+
 Bước 10: Xác định các non-requiredment:
 
 
