@@ -4,7 +4,7 @@ Buoc 1: Xac dinh business context, Xac dinh business broblem.
 
 Buoc 2: Xác định những stacholders:
 | Stacholders | Chức năng |
-|---:|---|---|
+|:---|---|
 | Tài xế | Nhận/từ chối chuyến, cập nhật trạng thái, vị trí và thông tin xe |
 | Nhân viên vận hành | Quản lý khách hàng, tài xế, chuyến đi, giao dịch và xử lý sự cố. |
 | Nhà cung cấp thanh toán | Xử lý thanh toán điện tử. |
@@ -18,6 +18,24 @@ Bước 3: Xác định các Business Role (BR):
 - BR05: Xem báo cáo số lượng chuyến, doanh thu, tỷ lệ hoàn thành, hủy chuyến và hiệu quả tài xế.
 - BR06: Tiếp nhận và xử lý giao dịch, trả kết quả thanh toán về CAB.
 - BR07: Gửi thông báo đến khách hàng và tài xế qua các kênh khác nhau.
+
+Bước 4: Xác định scope của project:
+
+Bước 5: Xác định các Bussiness Requiredment:
+|  |
+
+Bước 6: Xác định Business Process:
+
+Bước 7: Functional requiredment (FR):
+- FR01: Xác định vị trí khách.
+- FR02: Tìm tài xế sẵn có.
+
+Bước 8: Xác định Bussiness Ruler:
+| Mã | Bussiness Rule | Nội dung |
+|:---|---|---|
+Bước 9: Mô hình hóa dữ liệu (Xác định thực thể ERD): 
+Bước 10: Xác định các non-requiredment:
+
 
 
 
