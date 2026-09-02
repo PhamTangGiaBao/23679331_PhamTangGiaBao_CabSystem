@@ -31,37 +31,69 @@
 
 **Bước 4: Xác định scope của project.**
 
-**In scope**
+**In scope:**
 
 **1. Quản lý khách hàng:**
 - Đăng ký, đăng nhập.
 - Cập nhật thông tin cá nhân.
 - Xem lịch sử chuyến đi.
+  
 **2. Đặt xe**
 - Nhập điểm đón, điểm đến.
 - Lựa chọn loại xe.
 - Gửi yêu cầu đặt xe.
 - Theo dõi trạng thái chuyến đi.
+  
 **3. Quản lý tài xế**
 - Đăng ký/tạo tài khoản.
 - Quản lý hồ sơ và phương tiện.
 - Cập nhật trạng thái hoạt động.
 - Cập nhật vị trí.
+  
 **4. Tìm và phân công tài xế**  
 - Xác định tài xế phù hợp.
 - Ưu tiên tài xế gần khách hàng.
 - Xử lý trường hợp tài xế từ chối hoặc không phản hồi.
 - Thông báo khi không tìm được tài xế.
+  
 **5. Quản lý chuyến đi**
 - Tài xế nhận/từ chối chuyến.
 - Cập nhật trạng thái: đến điểm đón → đón khách → đang di chuyển → hoàn thành.
 - Lưu thông tin chuyến đi.
+  
 **6. Tính cước và thanh toán**
 - Tính số tiền phải trả.
 - Thanh toán tiền mặt hoặc điện tử.
 - Tích hợp nhà cung cấp thanh toán bên ngoài.
 - Xử lý khi thanh toán điện tử thất bại.
-**Out of scope**
+
+**7. Thông báo**
+- Thông báo trạng thái đặt xe/chuyến đi.
+- Thông báo chuyến mới cho tài xế.
+- Thông báo kết quả thanh toán.
+- Thiết kế để có thể mở rộng thêm kênh thông báo.
+
+**8. Quản trị và vận hành**
+- Quản lý khách hàng, tài xế, phương tiện, chuyến đi.
+- Theo dõi chuyến đang diễn ra.
+- Xử lý chuyến bị lỗi.
+- Tra cứu lịch sử giao dịch.
+- Phân quyền nhân viên.
+
+**9. Báo cáo**
+- Số lượng chuyến.
+- Doanh thu.
+- Tỷ lệ hoàn thành/hủy.
+- Hiệu quả hoạt động của tài xế.
+
+**10. Bảo mật và khả năng mở rộng**
+- Xác thực người dùng.
+- Phân quyền.
+- Bảo vệ dữ liệu cá nhân, vị trí và giao dịch.
+- Lưu vết các thao tác quan trọng.
+- Hỗ trợ mở rộng độc lập các thành phần hệ thống.
+  
+**Out of scope:**
 
 - Công thức tính cước cụ thể.
 - Tiêu chí ưu tiên tài xế.
@@ -70,8 +102,23 @@
 - Cách xử lý khi mất kết nối mạng.
 - Thời gian lưu trữ dữ liệu.
 
-Bước 5: Xác định các Bussiness Requiredment:
-|  |
+**Bước 5: Xác định các Bussiness Requiredment**
+
+| **Mã** | **Business Requirement** |
+|:---|---|
+| **BR01** | Hệ thống phải cung cấp nền tảng đặt xe trực tuyến cho khách hàng, tài xế và nhân viên vận hành. |
+| **BR02** | Hệ thống phải hỗ trợ khách hàng tạo và theo dõi yêu cầu đặt xe từ lúc yêu cầu được tạo đến khi chuyến hoàn thành. |
+| **BR03** | Hệ thống phải tự động tìm và phân công tài xế phù hợp, ưu tiên tài xế gần khách hàng và có trạng thái sẵn sàng. |
+| **BR04** | Hệ thống phải có cơ chế tiếp tục tìm tài xế khác khi tài xế được đề xuất không phản hồi hoặc từ chối chuyến. |
+| **BR05** | Hệ thống phải hỗ trợ thực hiện chuyến, tính cước và thanh toán bằng tiền mặt hoặc phương thức điện tử. |
+| **BR06** | Hệ thống phải tích hợp với nhà cung cấp thanh toán bên ngoài và không lưu trực tiếp thông tin nhạy cảm của thẻ/tài khoản thanh toán. |
+| **BR07** | Hệ thống phải cung cấp thông báo cho khách hàng và tài xế về các sự kiện quan trọng trong quá trình đặt và thực hiện chuyến. |
+| **BR08** | Hệ thống phải hỗ trợ nhân viên vận hành quản lý khách hàng, tài xế, phương tiện và chuyến đi. |
+| **BR09** | Hệ thống phải cung cấp báo cáo hoạt động kinh doanh, bao gồm số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế. |
+| **BR010** | Hệ thống phải đảm bảo bảo mật, xác thực và phân quyền đối với người dùng và các thao tác quản trị. |
+| **BR011** | Hệ thống phải có khả năng mở rộng để phục vụ số lượng lớn khách hàng/tài xế và bổ sung dịch vụ, phương thức thanh toán, kênh thông báo trong tương lai. |
+| **BR012** | Hệ thống phải hoạt động ổn định khi nhu cầu tăng cao và cho phép triển khai các chức năng mới từng phần mà hạn chế ảnh hưởng đến hệ thống hiện tại. |
+
 
 Bước 6: Xác định Business Process:
 
