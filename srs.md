@@ -115,32 +115,87 @@
 | **BR07** | Hệ thống phải cung cấp thông báo cho khách hàng và tài xế về các sự kiện quan trọng trong quá trình đặt và thực hiện chuyến. |
 | **BR08** | Hệ thống phải hỗ trợ nhân viên vận hành quản lý khách hàng, tài xế, phương tiện và chuyến đi. |
 | **BR09** | Hệ thống phải cung cấp báo cáo hoạt động kinh doanh, bao gồm số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế. |
-| **BR010** | Hệ thống phải đảm bảo bảo mật, xác thực và phân quyền đối với người dùng và các thao tác quản trị. |
-| **BR011** | Hệ thống phải có khả năng mở rộng để phục vụ số lượng lớn khách hàng/tài xế và bổ sung dịch vụ, phương thức thanh toán, kênh thông báo trong tương lai. |
-| **BR012** | Hệ thống phải hoạt động ổn định khi nhu cầu tăng cao và cho phép triển khai các chức năng mới từng phần mà hạn chế ảnh hưởng đến hệ thống hiện tại. |
+| **BR10** | Hệ thống phải đảm bảo bảo mật, xác thực và phân quyền đối với người dùng và các thao tác quản trị. |
+| **BR11** | Hệ thống phải có khả năng mở rộng để phục vụ số lượng lớn khách hàng/tài xế và bổ sung dịch vụ, phương thức thanh toán, kênh thông báo trong tương lai. |
+| **BR12** | Hệ thống phải hoạt động ổn định khi nhu cầu tăng cao và cho phép triển khai các chức năng mới từng phần mà hạn chế ảnh hưởng đến hệ thống hiện tại. |
 
 
-Bước 6: Xác định Business Process:
+**Bước 6: Xác định Business Process**
 
-Bước 7: Functional requiredment (FR):
-- FR01: Xác định vị trí khách.
-- FR02: Tìm tài xế sẵn có.
-
-Bước 8: Xác định Bussiness Ruler:
-| Mã | Bussiness Rule | Nội dung |
+| **Mã** | **Business Process** | **Nội dung** |
 |:---|---|---|
+| **BP01** | Đặt xe | Khách hàng tạo yêu cầu đặt xe. |
+| **BP02** | Tìm & phân công tài xế | Hệ thống tìm tài xế phù hợp và xử lý trường hợp từ chối/không phản hồi. |
+| **BP03** | Thực hiện chuyến | Tài xế đến đón, đón khách, di chuyển và hoàn thành chuyến. |
+| **BP04** | Tính cước & thanh toán | Hệ thống tính tiền và xử lý thanh toán tiền mặt/điện tử. |
+| **BP05** | Thông báo | Gửi thông báo về trạng thái đặt xe, tài xế, chuyến đi và thanh toán. |
+| **BP06** | Quản lý vận hành | Nhân viên quản lý khách hàng, tài xế, phương tiện, chuyến đi và xử lý sự cố. |
+| **BP07** | Báo cáo | Cung cấp dữ liệu về chuyến, doanh thu, hủy chuyến và hiệu quả tài xế. |
 
-Bước 9: Mô hình hóa dữ liệu (Xác định thực thể ERD): 
+**Bước 7: Xác định Functional requiredment (FR)**
 
-Bước 10: Xác định các non-requiredment:
+| **Mã** | **Functional Requirement** | **Mô tả** |
+|:---|---|---|
+| **FR01** | Quản lý tài khoản khách hàng | Cho phép khách hàng đăng ký, đăng nhập và cập nhật thông tin cá nhân. |
+| **FR02** | Tạo yêu cầu đặt xe | Cho phép khách hàng nhập điểm đón, điểm đến, chọn loại xe và gửi yêu cầu đặt xe. |
+| **FR03** | Theo dõi chuyến đi | Cho phép khách hàng theo dõi trạng thái chuyến, tài xế nhận chuyến và thời gian dự kiến tài xế đến. |
+| **FR04** | Tìm kiếm tài xế | Hệ thống xác định tài xế phù hợp dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành. |
+| **FR05** | Phân công tài xế | Gửi yêu cầu chuyến đến tài xế phù hợp và tiếp tục tìm tài xế khác nếu tài xế không phản hồi hoặc từ chối. |
+| **FR06** | Quản lý trạng thái tài xế | Cho phép tài xế cập nhật trạng thái hoạt động và chuyển sang trạng thái sẵn sàng nhận chuyến. |
+| **FR07** | Nhận và xử lý chuyến | Cho phép tài xế nhận hoặc từ chối chuyến được hệ thống đề xuất. |
+| **FR08** | Cập nhật trạng thái chuyến | Cho phép tài xế cập nhật: đã đến điểm đón → đã đón khách → đang di chuyển → hoàn thành chuyến. |
+| **FR09** | Quản lý vị trí tài xế | Lưu thông tin vị trí tài xế để hỗ trợ tìm tài xế gần khách hàng và dự kiến thời gian đến. |
+| **FR10** | Tính cước | Xác định số tiền khách hàng phải trả sau khi chuyến đi hoàn thành. |
+| **FR11** | Thanh toán | Hỗ trợ thanh toán bằng tiền mặt hoặc phương thức điện tử và xử lý kết quả giao dịch. |
+| **FR12** | Xử lý thanh toán thất bại | Thông báo cho khách hàng khi thanh toán điện tử thất bại và cho phép xử lý lại theo chính sách doanh nghiệp. |
+| **FR13** | Gửi thông báo | Gửi thông báo về tiếp nhận đặt xe, tài xế nhận chuyến, tài xế đến, hoàn thành chuyến và kết quả thanh toán. |
+| **FR14** | Quản lý dữ liệu vận hành | Nhân viên có thể quản lý khách hàng, tài xế, phương tiện và chuyến đi. |
+| **FR15** | Giám sát & xử lý sự cố | Nhân viên vận hành xem chuyến đang diễn ra, trạng thái tài xế, xử lý chuyến lỗi và tra cứu lịch sử giao dịch. |
+| **FR16** | Phân quyền quản trị | Kiểm soát các thao tác quản trị để nhân viên thông thường không thực hiện được thao tác nhạy cảm. |
+| **FR17** | Báo cáo | Cung cấp báo cáo về số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế. |
+| **FR18** | Lịch sử chuyến đi | Cho phép khách hàng xem lịch sử chuyến và số tiền phải trả. |
+| **FR19** | Đánh giá tài xế | Cho phép khách hàng đánh giá tài xế sau khi chuyến hoàn thành. |
 
-Bước 11: Tiến hành thiết kế các Usecase:
+**Bước 8: Xác định Bussiness Rules**
+| Mã | Bussiness Rule | Quy tắc |
+|:---|---|---|
+| **BRL01** | Xác thực người dùng | Khách hàng và tài xế phải được xác thực trước khi sử dụng các chức năng yêu cầu tài khoản. |
+| **BRL02** | Tài xế sẵn sàng | Tài xế phải ở trạng thái sẵn sàng nhận chuyến khi hệ thống xem xét phân công. |
+| **BRL03** | Ưu tiên tài xế | Hệ thống ưu tiên tài xế phù hợp và gần khách hàng. |
+| **BRL04** | Tài xế không phản hồi/từ chối | Nếu tài xế được đề xuất không phản hồi hoặc từ chối, hệ thống phải tiếp tục tìm tài xế khác. |
+| **BRL05** | Không tìm được tài xế | Nếu không tìm được tài xế phù hợp, hệ thống phải thông báo rõ ràng cho khách hàng. |
+| **BRL06** | Cập nhật trạng thái chuyến | Tài xế cập nhật chuyến theo các trạng thái: đã đến điểm đón → đã đón khách → đang di chuyển → hoàn thành. |
+| **BRL07** | Tính tiền | Sau khi chuyến hoàn thành, hệ thống phải xác định số tiền khách hàng phải trả. |
+| **BRL08** | Thanh toán điện tử | Thanh toán điện tử phải được thực hiện thông qua nhà cung cấp thanh toán bên ngoài và hệ thống CAB không lưu thông tin nhạy cảm của thẻ/tài khoản. |
+| **BRL09** | Thanh toán thất bại | Nếu thanh toán điện tử thất bại, hệ thống phải thông báo cho khách hàng và cho phép xử lý lại theo chính sách doanh nghiệp. |
+| **BRL10** | Phân quyền | Các thao tác quản trị phải được kiểm soát quyền truy cập; nhân viên thông thường không được thực hiện các thao tác nhạy cảm. |
+| **BRL11** | Bảo vệ dữ liệu | Thông tin cá nhân, phương tiện, vị trí và giao dịch phải được bảo vệ. |
+| **BRL12** | Lưu vết | Các thao tác quan trọng phải được lưu vết để phục vụ kiểm tra khi xảy ra sự cố. |
 
-Bước 12: Đặc tả Usecase:
+**Bước 9: Mô hình hóa dữ liệu (Xác định thực thể ERD)**
 
-Bước 13: Tiêu chí chấp nhận Acceptance Criteria (AC):
+**Bước 10: Xác định các Non-functional Requiredment**
 
-Bước 14: Truy xuất nguồn gốc yêu cầu (Requirement Traceability):
+| Mã | Non-functional Requiredment | Yêu cầu |
+|:---|---|---|
+| **NFR01** | Hiệu năng & khả năng chịu tải | Hệ thống phải hoạt động ổn định khi nhu cầu sử dụng tăng cao. |
+| **NFR02** | Khả năng mở rộng | Các thành phần có thể mở rộng độc lập khi tải tăng. |
+| **NFR03** | Tính sẵn sàng | Lỗi ở một chức năng như thanh toán hoặc thông báo không được làm toàn bộ hệ thống đặt xe ngừng hoạt động. |
+| **NFR04** | Khả năng bảo trì | Cho phép triển khai chức năng mới từng phần và hạn chế ảnh hưởng đến các chức năng đang hoạt động. |
+| **NFR05** | Bảo mật | Phải xác thực khách hàng và tài xế trước khi sử dụng các chức năng yêu cầu tài khoản. |
+| **NFR06** | Phân quyền | Các thao tác quản trị phải được kiểm soát quyền truy cập. |
+| **NFR07** | Bảo vệ dữ liệu | Bảo vệ thông tin cá nhân, phương tiện, vị trí và dữ liệu giao dịch. |
+| **NFR08** | Audit / Logging | Lưu vết các thao tác quan trọng để phục vụ kiểm tra khi xảy ra sự cố. |
+| **NFR09** | Khả năng mở rộng tích hợp | Có thể bổ sung các kênh thông báo, phương thức thanh toán và nhà cung cấp dịch vụ mới mà không phải thay đổi toàn bộ hệ thống. |
+| **NFR10** | Khả năng phát triển lâu dài | Kiến trúc hệ thống phải đủ linh hoạt để thay đổi hoặc thay thế một số thành phần kỹ thuật trong tương lai. |
+
+**Bước 11: Tiến hành thiết kế các Usecase**
+
+**Bước 12: Đặc tả Usecase**
+
+**Bước 13: Tiêu chí chấp nhận Acceptance Criteria(AC)**
+
+**Bước 14: Truy xuất nguồn gốc yêu cầu (Requirement Traceability)**
 
 
 
