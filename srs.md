@@ -195,7 +195,11 @@
 
 **Bước 13: Tiêu chí chấp nhận Acceptance Criteria(AC)**
 
-**Bước 14: Truy xuất nguồn gốc yêu cầu (Requirement Traceability)**
+**Bước 14: Truy xuất nguồn gốc yêu cầu (Bussiness Traceability)**
+
+**Đặc tả API**
+
+
 
 
 
