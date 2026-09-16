@@ -1,0 +1,2215 @@
+openapi: 3.0.0
+info:
+  title: CAB System API
+  description: API specification for online cab booking system (ABC Company)
+  version: 1.0.0
+  contact:
+    name: ABC Company
+    url: https://abc-company.com
+    email: support@abc-company.com
+
+servers:
+  - url: https://api.cab-system.com/v1
+    description: Production server
+  - url: https://staging-api.cab-system.com/v1
+    description: Staging server
+
+tags:
+  - name: Customer
+    description: Customer account management and booking operations
+  - name: Driver
+    description: Driver account and trip operations
+  - name: Admin
+    description: Administrative and operational management
+  - name: Payment
+    description: Payment processing operations
+  - name: Notification
+    description: Notification operations
+  - name: Reporting
+    description: Business reporting and analytics
+
+# ============================================
+# CUSTOMER ENDPOINTS (FR01, FR02, FR03, FR18, FR19)
+# ============================================
+
+paths:
+  /auth/customer/register:
+    post:
+      tags:
+        - Customer
+      summary: Customer registration (FR01)
+      operationId: registerCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+                - email
+                - full_name
+              properties:
+                phone:
+                  type: string
+                  example: "0912345678"
+                password:
+                  type: string
+                  format: password
+                  example: "SecurePassword123"
+                email:
+                  type: string
+                  format: email
+                  example: "customer@example.com"
+                full_name:
+                  type: string
+                  example: "Nguyen Van A"
+      responses:
+        "201":
+          description: Customer registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Customer already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/customer/login:
+    post:
+      tags:
+        - Customer
+      summary: Customer login (FR01)
+      operationId: loginCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+              properties:
+                phone:
+                  type: string
+                  example: "0912345678"
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  customer:
+                    $ref: "#/components/schemas/Customer"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /customers/profile:
+    get:
+      tags:
+        - Customer
+      summary: Get customer profile (FR01)
+      operationId: getCustomerProfile
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Customer profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Customer
+      summary: Update customer profile (FR01)
+      operationId: updateCustomerProfile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        "200":
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /rides:
+    post:
+      tags:
+        - Customer
+      summary: Create ride request (FR02)
+      operationId: createRideRequest
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RideRequest"
+      responses:
+        "201":
+          description: Ride request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ride"
+        "400":
+          description: Invalid ride details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: No available drivers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /rides/{rideId}:
+    get:
+      tags:
+        - Customer
+      summary: Track ride status (FR03)
+      operationId: getRideStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Ride details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ride"
+        "404":
+          description: Ride not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /customers/trips:
+    get:
+      tags:
+        - Customer
+      summary: Get trip history (FR18)
+      operationId: getTripHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Trip history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  trips:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Trip"
+
+  /rides/{rideId}/rating:
+    post:
+      tags:
+        - Customer
+      summary: Rate driver (FR19)
+      operationId: rateDriver
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 5
+                comment:
+                  type: string
+                  example: "Great driver, clean vehicle"
+      responses:
+        "201":
+          description: Rating submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rating"
+        "400":
+          description: Invalid rating
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Ride not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+# ============================================
+# DRIVER ENDPOINTS (FR04, FR05, FR06, FR07, FR08, FR09)
+# ============================================
+
+  /auth/driver/register:
+    post:
+      tags:
+        - Driver
+      summary: Driver registration (FR06)
+      operationId: registerDriver
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+                - email
+                - full_name
+                - license_number
+                - license_expiry
+              properties:
+                phone:
+                  type: string
+                  example: "0987654321"
+                password:
+                  type: string
+                  format: password
+                email:
+                  type: string
+                  format: email
+                full_name:
+                  type: string
+                  example: "Tran Van B"
+                license_number:
+                  type: string
+                  example: "43D123456"
+                license_expiry:
+                  type: string
+                  format: date
+      responses:
+        "201":
+          description: Driver registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/driver/login:
+    post:
+      tags:
+        - Driver
+      summary: Driver login (FR06)
+      operationId: loginDriver
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+              properties:
+                phone:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  driver:
+                    $ref: "#/components/schemas/Driver"
+
+  /drivers/profile:
+    get:
+      tags:
+        - Driver
+      summary: Get driver profile (FR06)
+      operationId: getDriverProfile
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Driver profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+
+    put:
+      tags:
+        - Driver
+      summary: Update driver profile (FR06)
+      operationId: updateDriverProfile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                bank_account:
+                  type: string
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+
+  /drivers/vehicles:
+    get:
+      tags:
+        - Driver
+      summary: Get driver vehicles (FR06)
+      operationId: getDriverVehicles
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Vehicles list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+
+    post:
+      tags:
+        - Driver
+      summary: Add vehicle (FR06)
+      operationId: addVehicle
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleInput"
+      responses:
+        "201":
+          description: Vehicle added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+
+  /drivers/status:
+    put:
+      tags:
+        - Driver
+      summary: Update driver status (FR06)
+      operationId: updateDriverStatus
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - available
+                    - busy
+                    - offline
+                  example: "available"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+
+  /drivers/location:
+    put:
+      tags:
+        - Driver
+      summary: Update driver location (FR09)
+      operationId: updateDriverLocation
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - latitude
+                - longitude
+              properties:
+                latitude:
+                  type: number
+                  format: float
+                  example: 10.7769
+                longitude:
+                  type: number
+                  format: float
+                  example: 106.7009
+      responses:
+        "200":
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverLocation"
+
+  /ride-requests/{requestId}/accept:
+    post:
+      tags:
+        - Driver
+      summary: Accept ride request (FR07)
+      operationId: acceptRideRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - vehicle_id
+              properties:
+                vehicle_id:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: Ride accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ride"
+        "400":
+          description: Cannot accept ride
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Ride request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /ride-requests/{requestId}/reject:
+    post:
+      tags:
+        - Driver
+      summary: Reject ride request (FR07)
+      operationId: rejectRideRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  example: "Too far away"
+      responses:
+        "200":
+          description: Ride rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /rides/{rideId}/update-status:
+    put:
+      tags:
+        - Driver
+      summary: Update ride trip status (FR08)
+      operationId: updateRideTripStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_status
+              properties:
+                trip_status:
+                  type: string
+                  enum:
+                    - arrived_pickup
+                    - passenger_picked_up
+                    - in_transit
+                    - completed
+                  example: "arrived_pickup"
+                latitude:
+                  type: number
+                  format: float
+                longitude:
+                  type: number
+                  format: float
+      responses:
+        "200":
+          description: Trip status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ride"
+        "400":
+          description: Invalid status transition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /drivers/active-rides:
+    get:
+      tags:
+        - Driver
+      summary: Get driver active rides
+      operationId: getDriverActiveRides
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Active rides retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ride"
+
+# ============================================
+# PAYMENT ENDPOINTS (FR10, FR11, FR12)
+# ============================================
+
+  /payments/calculate-fare:
+    post:
+      tags:
+        - Payment
+      summary: Calculate ride fare (FR10)
+      operationId: calculateFare
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickup_location
+                - dropoff_location
+                - vehicle_type
+                - distance
+                - duration
+              properties:
+                pickup_location:
+                  $ref: "#/components/schemas/Location"
+                dropoff_location:
+                  $ref: "#/components/schemas/Location"
+                vehicle_type:
+                  type: string
+                  enum:
+                    - economy
+                    - comfort
+                    - premium
+                distance:
+                  type: number
+                  format: float
+                  description: Distance in kilometers
+                duration:
+                  type: number
+                  format: float
+                  description: Duration in minutes
+      responses:
+        "200":
+          description: Fare calculated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FareCalculation"
+
+  /payments/process:
+    post:
+      tags:
+        - Payment
+      summary: Process ride payment (FR11)
+      operationId: processPayment
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentRequest"
+      responses:
+        "201":
+          description: Payment processed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "400":
+          description: Invalid payment details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "402":
+          description: Payment failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /payments/{paymentId}/retry:
+    post:
+      tags:
+        - Payment
+      summary: Retry failed electronic payment (FR12)
+      operationId: retryPayment
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Payment retry processed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "400":
+          description: Cannot retry payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /payments/{rideId}:
+    get:
+      tags:
+        - Payment
+      summary: Get payment details for ride
+      operationId: getPaymentDetails
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Payment details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+
+# ============================================
+# ADMIN ENDPOINTS (FR14, FR15, FR16)
+# ============================================
+
+  /admin/customers:
+    get:
+      tags:
+        - Admin
+      summary: List all customers (FR14)
+      operationId: listCustomers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - suspended
+      responses:
+        "200":
+          description: Customers list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  customers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Customer"
+
+  /admin/drivers:
+    get:
+      tags:
+        - Admin
+      summary: List all drivers (FR14)
+      operationId: listDrivers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - available
+              - busy
+              - offline
+              - suspended
+      responses:
+        "200":
+          description: Drivers list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  drivers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Driver"
+
+  /admin/vehicles:
+    get:
+      tags:
+        - Admin
+      summary: List all vehicles (FR14)
+      operationId: listVehicles
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Vehicles list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  vehicles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /admin/rides:
+    get:
+      tags:
+        - Admin
+      summary: List all rides (FR14, FR15)
+      operationId: listRides
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - requested
+              - accepted
+              - in_progress
+              - completed
+              - cancelled
+              - error
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Rides list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  rides:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Ride"
+
+  /admin/rides/{rideId}:
+    get:
+      tags:
+        - Admin
+      summary: Get ride details (FR15)
+      operationId: getRideDetails
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Ride details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RideDetails"
+
+  /admin/rides/{rideId}/resolve-error:
+    post:
+      tags:
+        - Admin
+      summary: Resolve errored ride (FR15)
+      operationId: resolveRideError
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resolution_type
+              properties:
+                resolution_type:
+                  type: string
+                  enum:
+                    - refund
+                    - retry
+                    - cancel
+                  example: "refund"
+                notes:
+                  type: string
+      responses:
+        "200":
+          description: Ride error resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ride"
+
+  /admin/transactions:
+    get:
+      tags:
+        - Admin
+      summary: Get transaction history (FR15)
+      operationId: getTransactionHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - ride_payment
+              - refund
+              - driver_payout
+      responses:
+        "200":
+          description: Transaction history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+
+  /admin/roles:
+    get:
+      tags:
+        - Admin
+      summary: List staff roles (FR16)
+      operationId: listRoles
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Roles list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+
+  /admin/staff:
+    get:
+      tags:
+        - Admin
+      summary: List staff members (FR16)
+      operationId: listStaff
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Staff list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StaffMember"
+
+    post:
+      tags:
+        - Admin
+      summary: Add staff member (FR16)
+      operationId: addStaffMember
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - full_name
+                - role_id
+              properties:
+                email:
+                  type: string
+                  format: email
+                full_name:
+                  type: string
+                role_id:
+                  type: string
+                  format: uuid
+                phone:
+                  type: string
+      responses:
+        "201":
+          description: Staff member added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+
+  /admin/permissions:
+    get:
+      tags:
+        - Admin
+      summary: List all permissions
+      operationId: listPermissions
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Permissions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+
+  /admin/staff/{staffId}/permissions:
+    get:
+      tags:
+        - Admin
+      summary: Get staff member permissions (FR16)
+      operationId: getStaffPermissions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Staff permissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+
+    put:
+      tags:
+        - Admin
+      summary: Update staff member permissions (FR16)
+      operationId: updateStaffPermissions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - permission_ids
+              properties:
+                permission_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        "200":
+          description: Permissions updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+# ============================================
+# REPORTING ENDPOINTS (FR17)
+# ============================================
+
+  /reports/rides:
+    get:
+      tags:
+        - Reporting
+      summary: Get rides report (FR17)
+      operationId: getRidesReport
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - day
+              - week
+              - month
+            default: "day"
+      responses:
+        "200":
+          description: Rides report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_rides:
+                    type: integer
+                  completed_rides:
+                    type: integer
+                  cancelled_rides:
+                    type: integer
+                  completion_rate:
+                    type: number
+                    format: float
+                  by_period:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        period:
+                          type: string
+                        count:
+                          type: integer
+
+  /reports/revenue:
+    get:
+      tags:
+        - Reporting
+      summary: Get revenue report (FR17)
+      operationId: getRevenueReport
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - day
+              - week
+              - month
+            default: "day"
+      responses:
+        "200":
+          description: Revenue report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_revenue:
+                    type: number
+                    format: float
+                  by_period:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        period:
+                          type: string
+                        revenue:
+                          type: number
+                          format: float
+                        ride_count:
+                          type: integer
+
+  /reports/driver-performance:
+    get:
+      tags:
+        - Reporting
+      summary: Get driver performance report (FR17)
+      operationId: getDriverPerformanceReport
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Driver performance report
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    driver_id:
+                      type: string
+                      format: uuid
+                    driver_name:
+                      type: string
+                    total_trips:
+                      type: integer
+                    completion_rate:
+                      type: number
+                      format: float
+                    average_rating:
+                      type: number
+                      format: float
+                    total_earnings:
+                      type: number
+                      format: float
+
+  /reports/cancellation:
+    get:
+      tags:
+        - Reporting
+      summary: Get cancellation report (FR17)
+      operationId: getCancellationReport
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Cancellation report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_cancelled:
+                    type: integer
+                  cancellation_rate:
+                    type: number
+                    format: float
+                  by_reason:
+                    type: object
+                    properties:
+                      customer_cancelled:
+                        type: integer
+                      driver_rejected:
+                        type: integer
+                      system_cancelled:
+                        type: integer
+
+# ============================================
+# NOTIFICATION ENDPOINTS (FR13)
+# ============================================
+
+  /notifications:
+    get:
+      tags:
+        - Notification
+      summary: Get user notifications (FR13)
+      operationId: getNotifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: unread_only
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  notifications:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+
+  /notifications/{notificationId}/mark-read:
+    put:
+      tags:
+        - Notification
+      summary: Mark notification as read
+      operationId: markNotificationAsRead
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+# ============================================
+# DATA SCHEMAS
+# ============================================
+
+components:
+  schemas:
+    # User Schemas
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        average_rating:
+          type: number
+          format: float
+        total_trips:
+          type: integer
+
+    Driver:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        license_number:
+          type: string
+        license_expiry:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - available
+            - busy
+            - offline
+            - suspended
+        current_location:
+          $ref: "#/components/schemas/Location"
+        bank_account:
+          type: string
+        average_rating:
+          type: number
+          format: float
+        total_trips:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    DriverLocation:
+      type: object
+      properties:
+        driver_id:
+          type: string
+          format: uuid
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        updated_at:
+          type: string
+          format: date-time
+
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        driver_id:
+          type: string
+          format: uuid
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        license_plate:
+          type: string
+        color:
+          type: string
+        seats:
+          type: integer
+        vehicle_type:
+          type: string
+          enum:
+            - economy
+            - comfort
+            - premium
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - maintenance
+        created_at:
+          type: string
+          format: date-time
+
+    VehicleInput:
+      type: object
+      required:
+        - make
+        - model
+        - year
+        - license_plate
+        - vehicle_type
+        - seats
+      properties:
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        license_plate:
+          type: string
+        vehicle_type:
+          type: string
+          enum:
+            - economy
+            - comfort
+            - premium
+        color:
+          type: string
+        seats:
+          type: integer
+
+    # Ride Schemas
+    Location:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        address:
+          type: string
+
+    RideRequest:
+      type: object
+      required:
+        - pickup_location
+        - dropoff_location
+        - vehicle_type
+      properties:
+        pickup_location:
+          $ref: "#/components/schemas/Location"
+        dropoff_location:
+          $ref: "#/components/schemas/Location"
+        vehicle_type:
+          type: string
+          enum:
+            - economy
+            - comfort
+            - premium
+        special_requests:
+          type: string
+
+    Ride:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        driver_id:
+          type: string
+          format: uuid
+          nullable: true
+        vehicle_id:
+          type: string
+          format: uuid
+          nullable: true
+        pickup_location:
+          $ref: "#/components/schemas/Location"
+        dropoff_location:
+          $ref: "#/components/schemas/Location"
+        vehicle_type:
+          type: string
+        status:
+          type: string
+          enum:
+            - requested
+            - accepted
+            - in_progress
+            - completed
+            - cancelled
+            - error
+        trip_status:
+          type: string
+          enum:
+            - waiting
+            - arrived_pickup
+            - passenger_picked_up
+            - in_transit
+            - completed
+          nullable: true
+        estimated_fare:
+          type: number
+          format: float
+        actual_fare:
+          type: number
+          format: float
+          nullable: true
+        payment_status:
+          type: string
+          enum:
+            - pending
+            - completed
+            - failed
+          nullable: true
+        driver_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+        special_requests:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    RideDetails:
+      allOf:
+        - $ref: "#/components/schemas/Ride"
+        - type: object
+          properties:
+            driver:
+              $ref: "#/components/schemas/Driver"
+            customer:
+              $ref: "#/components/schemas/Customer"
+            vehicle:
+              $ref: "#/components/schemas/Vehicle"
+            payment:
+              $ref: "#/components/schemas/Payment"
+            rating:
+              $ref: "#/components/schemas/Rating"
+
+    Trip:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        driver_id:
+          type: string
+          format: uuid
+        driver_name:
+          type: string
+        vehicle_type:
+          type: string
+        pickup_location:
+          $ref: "#/components/schemas/Location"
+        dropoff_location:
+          $ref: "#/components/schemas/Location"
+        distance:
+          type: number
+          format: float
+        duration:
+          type: number
+          format: float
+        fare:
+          type: number
+          format: float
+        payment_method:
+          type: string
+          enum:
+            - cash
+            - card
+            - wallet
+        completed_at:
+          type: string
+          format: date-time
+        driver_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+
+    # Payment Schemas
+    FareCalculation:
+      type: object
+      properties:
+        base_fare:
+          type: number
+          format: float
+        distance_fare:
+          type: number
+          format: float
+        time_fare:
+          type: number
+          format: float
+        surcharge:
+          type: number
+          format: float
+          nullable: true
+        discount:
+          type: number
+          format: float
+          nullable: true
+        total_fare:
+          type: number
+          format: float
+        currency:
+          type: string
+          example: "VND"
+
+    PaymentRequest:
+      type: object
+      required:
+        - ride_id
+        - amount
+        - payment_method
+      properties:
+        ride_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: float
+        payment_method:
+          type: string
+          enum:
+            - cash
+            - card
+            - wallet
+        card_token:
+          type: string
+          description: "For card payments - tokenized card info from payment gateway"
+          nullable: true
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ride_id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: float
+        payment_method:
+          type: string
+          enum:
+            - cash
+            - card
+            - wallet
+        status:
+          type: string
+          enum:
+            - pending
+            - completed
+            - failed
+            - refunded
+        transaction_id:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    Rating:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ride_id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        driver_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    # Admin Schemas
+    StaffMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        phone:
+          type: string
+        role_id:
+          type: string
+          format: uuid
+        role_name:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+        created_at:
+          type: string
+          format: date-time
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    Permission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - ride_payment
+            - refund
+            - driver_payout
+        ride_id:
+          type: string
+          format: uuid
+          nullable: true
+        customer_id:
+          type: string
+          format: uuid
+          nullable: true
+        driver_id:
+          type: string
+          format: uuid
+          nullable: true
+        amount:
+          type: number
+          format: float
+        status:
+          type: string
+          enum:
+            - pending
+            - completed
+            - failed
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # Notification Schema
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - ride_accepted
+            - driver_arrived
+            - ride_completed
+            - payment_received
+            - payment_failed
+            - ride_cancelled
+            - new_ride_offer
+        title:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            ride_id:
+              type: string
+              format: uuid
+            driver_id:
+              type: string
+              format: uuid
+            status:
+              type: string
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    # Error Response
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
